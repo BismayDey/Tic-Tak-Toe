@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Dark Tic-Tac-Toe</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #000428, #004e92);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            font-family: 'Arial', sans-serif;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        .game-options {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .game-options button {
+            margin: 10px;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            color: #fff;
+            background: #ff6347;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        .game-options button:hover {
+            background: #ff4500;
+            transform: scale(1.1);
+        }
+
+        .game-options button:active {
+            transform: scale(1);
+        }
+
+        .player-choice {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .player-choice label {
+            font-size: 1.5em;
+            color: #fff;
+            margin: 10px;
+        }
+
+        .player-choice select {
+            font-size: 1.2em;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #fff;
+            background: rgba(50, 50, 50, 0.8);
+            color: #fff;
+        }
+
+        .player-choice button {
+            margin-top: 10px;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            color: #fff;
+            background: #ff6347;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        .player-choice button:hover {
+            background: #ff4500;
+            transform: scale(1.1);
+        }
+
+        .player-choice button:active {
+            transform: scale(1);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 120px);
+            grid-template-rows: repeat(3, 120px);
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            position: relative;
+        }
+
+        .cell {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(50, 50, 50, 0.9);
+            border: 4px solid #333;
+            border-radius: 15px;
+            font-size: 5em;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            user-select: none;
+            position: relative;
+        }
+
+        .cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            background: rgba(50, 50, 50, 1);
+        }
+
+        .cell.x::after, .cell.o::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            transition: background 0.3s ease;
+        }
+
+        .cell.x {
+            color: #ff6347;
+        }
+
+        .cell.o {
+            color: #4682b4;
+        }
+
+        .highlight {
+            background: rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+            animation: highlight 1s ease-in-out;
+        }
+
+        @keyframes highlight {
+            0% { background: rgba(0, 255, 0, 0.4); }
+            50% { background: rgba(0, 255, 0, 0.2); }
+            100% { background: rgba(0, 255, 0, 0.4); }
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 2em;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            animation: pulse-scoreboard 2s infinite;
+        }
+
+        .scoreboard div {
+            margin: 0 30px;
+        }
+
+        @keyframes pulse-scoreboard {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .play-again-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            color: #fff;
+            background: #ff6347;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+
+        .play-again-btn:hover {
+            background: #ff4500;
+            transform: scale(1.1);
+        }
+
+        .play-again-btn:active {
+            transform: scale(1);
+        }
+
+        .win-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 2.5em;
+            text-align: center;
+            display: none;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameOptions" class="game-options">
+        <button id="playWithFriend">Play with a Friend</button>
+        <button id="playWithComputer">Play with Computer</button>
+    </div>
+
+    <div id="playerChoice" class="player-choice">
+        <label for="playerSign">Choose your sign:</label>
+        <select id="playerSign">
+            <option value="X">X</option>
+            <option value="O">O</option>
+        </select>
+        <button id="startGame">Start Game</button>
+    </div>
+
+    <div class="scoreboard">
+        <div>Player X: <span id="scoreX">0</span></div>
+        <div>Player O: <span id="scoreO">0</span></div>
+    </div>
+    <div id="board" class="board"></div>
+    <div id="winMessage" class="win-message"></div>
+    <button id="playAgain" class="play-again-btn">Play Again</button>
+
+    <!-- Add audio elements -->
+    <audio id="winSound" src="success-fanfare-trumpets-6185.mp3"></audio>
+    <audio id="clickSound" src="wind-172559.mp3"></audio>
+    <audio id="drawSound" src="fail-234710.mp3"></audio>
+
+    <script>
+        const board = document.getElementById('board');
+        const cells = [];
+        const winMessage = document.getElementById('winMessage');
+        const scoreX = document.getElementById('scoreX');
+        const scoreO = document.getElementById('scoreO');
+        const playAgainButton = document.getElementById('playAgain');
+        const winSound = document.getElementById('winSound');
+        const clickSound = document.getElementById('clickSound');
+        const drawSound = document.getElementById('drawSound');
+        const gameOptions = document.getElementById('gameOptions');
+        const playerChoice = document.getElementById('playerChoice');
+        const startGameButton = document.getElementById('startGame');
+        const playerSignSelect = document.getElementById('playerSign');
+
+        let currentPlayer = 'X';
+        let gameOver = false;
+        let xScore = 0;
+        let oScore = 0;
+        let isComputerMode = false;
+        let playerSign = 'X';
+
+        // Create the 3x3 grid
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.dataset.index = i;
+                cell.addEventListener('click', handleClick);
+                board.appendChild(cell);
+                cells.push(cell);
+            }
+        }
+
+        // Handle cell click
+        function handleClick(event) {
+            if (gameOver || event.target.textContent) return;
+
+            event.target.textContent = currentPlayer;
+            event.target.classList.add(currentPlayer.toLowerCase());
+            event.target.classList.add('animate');
+            clickSound.play(); // Play click sound
+
+            if (checkWin()) {
+                setTimeout(() => {
+                    highlightWinningCells();
+                    winMessage.textContent = `${currentPlayer} wins!`;
+                    winMessage.style.display = 'block';
+                    winSound.play(); // Play win sound
+                    updateScore();
+                }, 100);
+                gameOver = true;
+                return;
+            }
+            if (cells.every(cell => cell.textContent)) {
+                setTimeout(() => {
+                    winMessage.textContent = 'It\'s a draw!';
+                    winMessage.style.display = 'block';
+                    drawSound.play(); // Play draw sound
+                }, 100);
+                gameOver = true;
+                return;
+            }
+            if (isComputerMode && currentPlayer === playerSign) {
+                setTimeout(computerMove, 500);
+            }
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+
+        // Check for a win
+        function checkWin() {
+            const winningCombos = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6] // Diagonals
+            ];
+
+            return winningCombos.some(combo => {
+                const [a, b, c] = combo;
+                return cells[a].textContent &&
+                       cells[a].textContent === cells[b].textContent &&
+                       cells[a].textContent === cells[c].textContent;
+            });
+        }
+
+        // Highlight winning cells
+        function highlightWinningCells() {
+            const winningCombos = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6] // Diagonals
+            ];
+
+            winningCombos.forEach(combo => {
+                const [a, b, c] = combo;
+                if (cells[a].textContent &&
+                    cells[a].textContent === cells[b].textContent &&
+                    cells[a].textContent === cells[c].textContent) {
+                    cells[a].classList.add('highlight');
+                    cells[b].classList.add('highlight');
+                    cells[c].classList.add('highlight');
+                }
+            });
+        }
+
+        // Update the scoreboard
+        function updateScore() {
+            if (currentPlayer === 'X') {
+                xScore++;
+                scoreX.textContent = xScore;
+            } else {
+                oScore++;
+                scoreO.textContent = oScore;
+            }
+
+            if (xScore >= 10 || oScore >= 10) {
+                setTimeout(() => {
+                    alert('Game over! Resetting scores.');
+                    resetGame();
+                }, 1000); // Reset after 1 second delay
+            }
+        }
+
+        // Computer makes a move
+        function computerMove() {
+            const availableCells = cells.filter(cell => !cell.textContent);
+            if (availableCells.length === 0) return;
+            const randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
+            randomCell.textContent = currentPlayer;
+            randomCell.classList.add(currentPlayer.toLowerCase());
+            randomCell.classList.add('animate');
+            clickSound.play(); // Play click sound
+
+            if (checkWin()) {
+                setTimeout(() => {
+                    highlightWinningCells();
+                    winMessage.textContent = `${currentPlayer} wins!`;
+                    winMessage.style.display = 'block';
+                    winSound.play(); // Play win sound
+                    updateScore();
+                }, 100);
+                gameOver = true;
+                return;
+            }
+            if (cells.every(cell => cell.textContent)) {
+                setTimeout(() => {
+                    winMessage.textContent = 'It\'s a draw!';
+                    winMessage.style.display = 'block';
+                    drawSound.play(); // Play draw sound
+                }, 100);
+                gameOver = true;
+                return;
+            }
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+
+        // Reset the game
+        function resetGame() {
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o', 'highlight');
+            });
+            winMessage.style.display = 'none';
+            currentPlayer = playerSign;
+            gameOver = false;
+            if (isComputerMode && currentPlayer === playerSign) {
+                setTimeout(computerMove, 500);
+            }
+        }
+
+        // Handle game mode selection
+        document.getElementById('playWithFriend').addEventListener('click', () => {
+            gameOptions.style.display = 'none';
+            playerChoice.style.display = 'none';
+            createBoard();
+        });
+
+        document.getElementById('playWithComputer').addEventListener('click', () => {
+            gameOptions.style.display = 'none';
+            playerChoice.style.display = 'flex';
+        });
+
+        // Start the game with chosen sign
+        startGameButton.addEventListener('click', () => {
+            playerSign = playerSignSelect.value;
+            isComputerMode = true;
+            gameOptions.style.display = 'none';
+            playerChoice.style.display = 'none';
+            createBoard();
+            currentPlayer = playerSign;
+            if (currentPlayer === 'O') {
+                setTimeout(computerMove, 500);
+            }
+        });
+
+        // Set up the Play Again button
+        playAgainButton.addEventListener('click', resetGame);
+    </script>
+</body>
+</html>
